@@ -1,54 +1,70 @@
 import dash
-from dash import dcc, html
-import plotly.express as px
+from dash import html, dcc, Input, Output, State
 import pandas as pd
+import plotly.express as px
 
-# Load and clean data
+# Load and prep your dataset
+# df = pd.read_csv("OnlineRetail.csv", encoding='ISO-8859-1')
 df = pd.read_excel("data/online_retail_II.xlsx")
-df = df.dropna(subset=['Customer ID']).copy()
-df['TotalPrice'] = df['Quantity'] * df['Price']
-df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
 
-# Grouped data
-revenue_by_country = df.groupby('Country')['TotalPrice'].sum().sort_values(ascending=False)
-top_products = df.groupby('Description')['TotalPrice'].sum().sort_values(ascending=False).head(10)
-sales_over_time = df.resample('W-Mon', on='InvoiceDate')['TotalPrice'].sum().reset_index()
+# Remove the rows from data frame where country name is Unspecified
+df_country_cleaned = df[df['Country']!='Unspecified']
 
-# Dash app
+df_country_cleaned['InvoiceDate'] = pd.to_datetime(df_country_cleaned['InvoiceDate'])
+df_country_cleaned['TotalPrice'] = df_country_cleaned['Quantity'] * df_country_cleaned['Price']
+
+# Initialize Dash app
 app = dash.Dash(__name__)
 
+# Layout
 app.layout = html.Div([
-    html.H1("Online Retail Dashboard", style={'textAlign': 'center'}),
+    html.H2("Online Retail Dashboard"),
 
     html.Div([
-        html.H3(f"Total Revenue: £{df['TotalPrice'].sum():,.2f}")
-    ], style={'textAlign': 'center', 'marginBottom': '40px'}),
-
-    dcc.Graph(
-        figure=px.bar(
-            revenue_by_country.head(10),
-            title="Top Countries by Revenue",
-            labels={'value': 'Revenue', 'index': 'Country'}
+        html.Label("Select Country:"),
+        dcc.Dropdown(
+            id='country-dropdown',
+            options=[{'label': c, 'value': c} for c in sorted(df_country_cleaned['Country'].unique())],
+            value='United Kingdom',
+            clearable=False
         )
-    ),
+    ], style={'width': '30%', 'display': 'inline-block'}),
 
-    dcc.Graph(
-        figure=px.bar(
-            top_products,
-            title="Top 10 Products by Revenue",
-            labels={'value': 'Revenue', 'index': 'Product'}
+    html.Div([
+        html.Label("Select Date Range:"),
+        dcc.DatePickerRange(
+            id='date-picker',
+            min_date_allowed=df_country_cleaned['InvoiceDate'].min().date(),
+            max_date_allowed=df_country_cleaned['InvoiceDate'].max().date(),
+            start_date=df_country_cleaned['InvoiceDate'].min().date(),
+            end_date=df_country_cleaned['InvoiceDate'].max().date()
         )
-    ),
+    ], style={'width': '40%', 'paddingLeft': '20px', 'display': 'inline-block'}),
 
-    dcc.Graph(
-        figure=px.line(
-            sales_over_time,
-            x='InvoiceDate',
-            y='TotalPrice',
-            title='Weekly Revenue Over Time'
-        )
-    )
+    html.Button("Update", id='update-button', n_clicks=0, style={'marginTop': '20px'}),
+
+    dcc.Graph(id='revenue-graph')
 ])
+
+# Callback
+@app.callback(
+    Output('revenue-graph', 'figure'),
+    Input('update-button', 'n_clicks'),
+    State('country-dropdown', 'value'),
+    State('date-picker', 'start_date'),
+    State('date-picker', 'end_date')
+)
+def update_graph(n_clicks, selected_country, start_date, end_date):
+    filtered_df = df_country_cleaned[
+        (df_country_cleaned['Country'] == selected_country) &
+        (df_country_cleaned['InvoiceDate'] >= pd.to_datetime(start_date)) &
+        (df_country_cleaned['InvoiceDate'] <= pd.to_datetime(end_date))
+    ]
+
+    grouped = filtered_df.groupby(filtered_df['InvoiceDate'].dt.date)['TotalPrice'].sum().reset_index()
+    fig = px.line(grouped, x='InvoiceDate', y='TotalPrice',
+                  title=f"Total Revenue Over Time - {selected_country}")
+    return fig
 
 if __name__ == '__main__':
     app.run(debug=True)
