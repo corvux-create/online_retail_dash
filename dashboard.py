@@ -1,4 +1,5 @@
 import dash
+import dash_bootstrap_components as dbc
 from dash import html, dcc, Input, Output, State
 import pandas as pd
 import plotly.express as px
@@ -16,35 +17,40 @@ df_country_cleaned['TotalPrice'] = df_country_cleaned['Quantity'] * df_country_c
 # Initialize Dash app
 app = dash.Dash(__name__)
 
-# Layout
-app.layout = html.Div([
-    html.H2("Online Retail Dashboard"),
-
-    html.Div([
-        html.Label("Select Country:"),
-        dcc.Dropdown(
-            id='country-dropdown',
-            options=[{'label': c, 'value': c} for c in sorted(df_country_cleaned['Country'].unique())],
-            value='United Kingdom',
-            clearable=False
-        )
-    ], style={'width': '30%', 'display': 'inline-block'}),
-
-    html.Div([
-        html.Label("Select Date Range:"),
-        dcc.DatePickerRange(
-            id='date-picker',
-            min_date_allowed=df_country_cleaned['InvoiceDate'].min().date(),
-            max_date_allowed=df_country_cleaned['InvoiceDate'].max().date(),
-            start_date=df_country_cleaned['InvoiceDate'].min().date(),
-            end_date=df_country_cleaned['InvoiceDate'].max().date()
-        )
-    ], style={'width': '40%', 'paddingLeft': '20px', 'display': 'inline-block'}),
-
-    html.Button("Update", id='update-button', n_clicks=0, style={'marginTop': '20px'}),
-
-    dcc.Graph(id='revenue-graph')
-])
+app.layout = dbc.Container(
+    [
+        dbc.Row(html.H2("Online Retail Dashboard")),
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.Div([
+                        html.Label("Select Country:"),
+                            dcc.Dropdown(
+                                id='country-dropdown',
+                                options=[{'label': c, 'value': c} for c in sorted(df_country_cleaned['Country'].unique())],
+                                value='United Kingdom',
+                                clearable=False
+                            )
+                    ])),
+                dbc.Col(
+                    html.Div([
+                        html.Label("Select Date Range:"),
+                            dcc.DatePickerRange(
+                                id='date-picker',
+                                min_date_allowed=df_country_cleaned['InvoiceDate'].min().date(),
+                                max_date_allowed=df_country_cleaned['InvoiceDate'].max().date(),
+                                start_date=df_country_cleaned['InvoiceDate'].min().date(),
+                                end_date=df_country_cleaned['InvoiceDate'].max().date()
+                            )
+                    ])),
+                dbc.Col(html.Button("Update", id='update-button', n_clicks=0, style={'marginTop': '20px'})),
+            ]
+        ),
+        dbc.Row(
+            dcc.Graph(id='revenue-graph')
+        ),
+    ]
+)
 
 # Callback
 @app.callback(
