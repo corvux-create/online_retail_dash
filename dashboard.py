@@ -4,7 +4,6 @@ from dash import html, dcc, Input, Output, State
 import pandas as pd
 import plotly.express as px
 
-# Load and prep your dataset
 # df = pd.read_csv("OnlineRetail.csv", encoding='ISO-8859-1')
 df = pd.read_excel("data/online_retail_II.xlsx")
 
@@ -15,42 +14,67 @@ df_country_cleaned['InvoiceDate'] = pd.to_datetime(df_country_cleaned['InvoiceDa
 df_country_cleaned['TotalPrice'] = df_country_cleaned['Quantity'] * df_country_cleaned['Price']
 
 # Initialize Dash app
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+controls_Dropdown = html.Div(
+            [
+                # html.Label("Select Country:", style={"fontWeight": "bold"}),
+                dcc.Dropdown(
+                    id='country-dropdown',
+                    options=[{'label': c, 'value': c} for c in sorted(df_country_cleaned['Country'].unique())],
+                    value='United Kingdom',
+                    clearable=False,
+                    # style={'width': '100%'}
+                ),
+            ]
+        )
+
+controls_DatePickerRange = html.Div(
+            [
+                # html.Label("Select Date Rangeyyy:", style={"fontWeight": "bold"}),
+                dcc.DatePickerRange(
+                    id='date-picker',
+                    min_date_allowed=df_country_cleaned['InvoiceDate'].min().date(),
+                    max_date_allowed=df_country_cleaned['InvoiceDate'].max().date(),
+                    start_date=df_country_cleaned['InvoiceDate'].min().date(),
+                    end_date=df_country_cleaned['InvoiceDate'].max().date(),
+                    # style={'width': '100%'}
+                ),
+            ]
+        )
+
 
 app.layout = dbc.Container(
     [
-        dbc.Row(html.H2("Online Retail Dashboard")),
+        dbc.Row(dbc.Col(html.H2("Online Retail Dashboard"))),
+
         dbc.Row(
             [
                 dbc.Col(
-                    html.Div([
-                        html.Label("Select Country:"),
-                            dcc.Dropdown(
-                                id='country-dropdown',
-                                options=[{'label': c, 'value': c} for c in sorted(df_country_cleaned['Country'].unique())],
-                                value='United Kingdom',
-                                clearable=False
-                            )
-                    ])),
+                    controls_Dropdown,
+                    md=3, sm=12
+                ),
                 dbc.Col(
-                    html.Div([
-                        html.Label("Select Date Range:"),
-                            dcc.DatePickerRange(
-                                id='date-picker',
-                                min_date_allowed=df_country_cleaned['InvoiceDate'].min().date(),
-                                max_date_allowed=df_country_cleaned['InvoiceDate'].max().date(),
-                                start_date=df_country_cleaned['InvoiceDate'].min().date(),
-                                end_date=df_country_cleaned['InvoiceDate'].max().date()
-                            )
-                    ])),
-                dbc.Col(html.Button("Update", id='update-button', n_clicks=0, style={'marginTop': '20px'})),
-            ]
+                    controls_DatePickerRange,
+                    md=5, sm=12
+                ),
+                dbc.Col(
+                    [
+                        html.Br(),  # Adds vertical space to align button
+                        html.Button("Update", id='update-button', n_clicks=0, className="btn btn-primary")
+                    ],
+                    md=2, sm=12, className="d-flex align-items-end justify-content-center"
+                ),
+            ],
+            className="mb-4"
         ),
+
         dbc.Row(
-            dcc.Graph(id='revenue-graph')
+            dbc.Col(dcc.Graph(id='revenue-graph'))
         ),
-    ]
+    ],
+    fluid=True
 )
+
 
 # Callback
 @app.callback(

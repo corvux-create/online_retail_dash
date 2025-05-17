@@ -1,0 +1,44 @@
+/* General font size for dropdown and date picker */
+.Select-control, .DateRangePicker, .DateInput, .SingleDatePicker {
+    font-size: 18px !important;
+    height: 50px !important;
+}
+
+/* Dropdown container */
+#country-dropdown .Select-control {
+    min-height: 50px !important;
+    font-size: 18px;
+}
+
+/* Make the dropdown expand to full width */
+#country-dropdown {
+    width: 100% !important;
+    max-width: 300px;
+}
+
+/* Date picker container */
+#date-picker {
+    width: 100% !important;
+    max-width: 320px;
+}
+
+/* Make the input fields of date picker larger */
+.DateInput_input {
+    font-size: 18px !important;
+    padding: 12px !important;
+    height: 50px !important;
+}
+
+/* Button styling */
+#update-button {
+    font-size: 18px;
+    height: 50px;
+    width: 100%;
+    max-width: 120px;
+}
+
+/* Optional: fix alignment of button */
+#update-button:hover {
+    background-color: #004085;
+    color: white;
+}
