@@ -42,7 +42,6 @@ controls_DatePickerRange = html.Div(
             ]
         )
 
-
 app.layout = dbc.Container(
     [
         dbc.Row(dbc.Col(html.H2("Online Retail Dashboard"))),
@@ -69,8 +68,12 @@ app.layout = dbc.Container(
         ),
 
         dbc.Row(
-            dbc.Col(dcc.Graph(id='revenue-graph'))
+            dbc.Col(dcc.Graph(id='revenue-graph'), md=12)
         ),
+
+        dbc.Row(
+            dbc.Col(dcc.Graph(id='top-products-graph'), md=12)
+        )
     ],
     fluid=True
 )
@@ -78,7 +81,8 @@ app.layout = dbc.Container(
 
 # Callback
 @app.callback(
-    Output('revenue-graph', 'figure'),
+    [Output('revenue-graph', 'figure'),
+     Output('top-products-graph', 'figure')],
     Input('update-button', 'n_clicks'),
     State('country-dropdown', 'value'),
     State('date-picker', 'start_date'),
@@ -91,10 +95,19 @@ def update_graph(n_clicks, selected_country, start_date, end_date):
         (df_country_cleaned['InvoiceDate'] <= pd.to_datetime(end_date))
     ]
 
+    # Line chart: revenue over time
     grouped = filtered_df.groupby(filtered_df['InvoiceDate'].dt.date)['TotalPrice'].sum().reset_index()
-    fig = px.line(grouped, x='InvoiceDate', y='TotalPrice',
-                  title=f"Total Revenue Over Time - {selected_country}")
-    return fig
+    revenue_fig = px.line(grouped, x='InvoiceDate', y='TotalPrice',
+                          title=f"Total Revenue Over Time - {selected_country}")
+
+    # Bar chart: top 10 selling products
+    product_grouped = filtered_df.groupby('Description')['TotalPrice'].sum().reset_index()
+    top_products = product_grouped.sort_values('TotalPrice', ascending=False).head(10)
+    product_fig = px.bar(top_products, x='TotalPrice', y='Description', orientation='h',
+                         title="Top 10 Products by Revenue")
+    product_fig.update_layout(yaxis={'categoryorder':'total ascending'})
+
+    return revenue_fig, product_fig
 
 if __name__ == '__main__':
     app.run(debug=True)
