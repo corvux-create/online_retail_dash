@@ -1,44 +1,68 @@
-/* General font size for dropdown and date picker */
-.Select-control, .DateRangePicker, .DateInput, .SingleDatePicker {
-    font-size: 18px !important;
-    height: 50px !important;
-}
-
-/* Dropdown container */
-#country-dropdown .Select-control {
-    min-height: 50px !important;
-    font-size: 18px;
-}
-
-/* Make the dropdown expand to full width */
-#country-dropdown {
-    width: 100% !important;
-    max-width: 300px;
-}
-
-/* Date picker container */
-#date-picker {
-    width: 100% !important;
-    max-width: 320px;
-}
-
-/* Make the input fields of date picker larger */
-.DateInput_input {
-    font-size: 18px !important;
-    padding: 12px !important;
-    height: 50px !important;
-}
-
-/* Button styling */
+/* General style for inputs and button */
+.Select-control,
+.DateInput_input,
+.DateRangePicker,
+.SingleDatePicker,
 #update-button {
-    font-size: 18px;
-    height: 50px;
-    width: 100%;
-    max-width: 120px;
+    font-size: 16px !important;
+    height: 48px !important;
+    width: 90% !important;
+    display: block !important;
 }
 
-/* Optional: fix alignment of button */
-#update-button:hover {
-    background-color: #004085;
+.DateRangePicker_picker {
+    z-index: 1000 !important; /* ensures the calendar pops above other content */
+}
+
+/* Dropdown container full width */
+#country-dropdown {
+    width: 90%;
+}
+
+/* Date picker full width */
+#date-picker {
+    width: 100%;
+}
+
+.DateRangePickerInput {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    width: 100% !important;
+    justify-content: space-between;
+}
+
+.DateInput {
+    flex: 1 1 45% !important;
+    min-width: 0;
+    margin: 0 2px;
+}
+
+.DateRangePickerInput_arrow {
+    padding: 0 5px;
+    font-size: 18px;
+}
+
+/* Make inputs visually larger */
+.DateInput_input {
+    width: 100% !important;
+    font-size: 12px;
+    padding: 12px;
+    height: 50px;
+    box-sizing: border-box;
+}
+
+/* Button full width, consistent style */
+#update-button {
+    font-size: 16px;
+    height: 48px;
+    background-color: #007bff;
     color: white;
+    border: none;
+    width: 100%;
+    max-width: 100%;
+}
+
+#update-button:hover {
+    background-color: #0056b3;
 }
