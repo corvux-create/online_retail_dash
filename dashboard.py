@@ -48,7 +48,8 @@ controls = dbc.Col(
             dbc.Row(
                 dbc.Col(
                     html.Button("Update", id='update-button', n_clicks=0, className="btn btn-primary w-100"),
-                    width=12
+                    width=12,
+                    className="mb-3"
                 )
             ),
             dbc.Row([
@@ -96,12 +97,20 @@ app.layout = dbc.Container(
             [
                 controls,
                 dbc.Col(
-                    [
-                        dcc.Graph(id='revenue-graph', className="mb-4"),
-                        dcc.Graph(id='top-products-graph', className="mb-4"),
-                        dcc.Graph(id='scatter-graph', className="mb-4")
-                    ],
+                    dcc.Graph(id='revenue-graph', className="mb-4"),
                     md=9, sm=12
+                )
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                        dcc.Graph(id='top-products-graph', className="mb-4"),
+                    md=6, sm=12
+                ),
+                dbc.Col(
+                        dcc.Graph(id='scatter-graph', className="mb-4"),
+                    md=6, sm=12
                 )
             ]
         ),
