@@ -51,6 +51,36 @@ controls = dbc.Col(
                     width=12
                 )
             ),
+            dbc.Row([
+                dbc.Col(dbc.Card([
+                    dbc.CardBody([
+                        html.Small("Total Revenue", className="text-muted"),
+                        html.H5(id="metric-revenue", className="card-text")
+                    ])
+                ], className="mb-2"), width=6),
+
+                dbc.Col(dbc.Card([
+                    dbc.CardBody([
+                        html.Small("Total Quantity", className="text-muted"),
+                        html.H5(id="metric-quantity", className="card-text")
+                    ])
+                ], className="mb-2"), width=6),
+            ]),
+            dbc.Row([
+                dbc.Col(dbc.Card([
+                    dbc.CardBody([
+                        html.Small("Unique Products", className="text-muted"),
+                        html.H5(id="metric-products", className="card-text")
+                    ])
+                ], className="mb-2"), width=6),
+
+                dbc.Col(dbc.Card([
+                    dbc.CardBody([
+                        html.Small("Transactions", className="text-muted"),
+                        html.H5(id="metric-invoices", className="card-text")
+                    ])
+                ], className="mb-2"), width=6),
+            ]),
         ])
     ]),
     md=3, sm=12
@@ -67,12 +97,12 @@ app.layout = dbc.Container(
                 controls,
                 dbc.Col(
                     [
-                        dbc.Row(dcc.Graph(id='revenue-graph'), className="mb-4"),
-                        dbc.Row(dcc.Graph(id='top-products-graph'), className="mb-4"),
-                        dbc.Row(dcc.Graph(id='scatter-graph'))
+                        dcc.Graph(id='revenue-graph', className="mb-4"),
+                        dcc.Graph(id='top-products-graph', className="mb-4"),
+                        dcc.Graph(id='scatter-graph', className="mb-4")
                     ],
                     md=9, sm=12
-                ),
+                )
             ]
         ),
     ],
@@ -83,7 +113,11 @@ app.layout = dbc.Container(
 @app.callback(
     [Output('revenue-graph', 'figure'),
      Output('top-products-graph', 'figure'),
-     Output('scatter-graph', 'figure')],
+     Output('scatter-graph', 'figure'),
+     Output('metric-revenue', 'children'),
+     Output('metric-quantity', 'children'),
+     Output('metric-products', 'children'),
+     Output('metric-invoices', 'children')],
     Input('update-button', 'n_clicks'),
     State('country-dropdown', 'value'),
     State('date-picker', 'start_date'),
@@ -95,6 +129,12 @@ def update_graph(n_clicks, selected_country, start_date, end_date):
         (df['InvoiceDate'] >= pd.to_datetime(start_date)) &
         (df['InvoiceDate'] <= pd.to_datetime(end_date))
     ]
+
+    # Metrics
+    total_revenue = f"${filtered_df['TotalPrice'].sum():,.2f}"
+    total_quantity = f"{filtered_df['Quantity'].sum():,}"
+    unique_products = f"{filtered_df['Description'].nunique():,}"
+    num_invoices = f"{filtered_df['Invoice'].nunique():,}"
 
     # Line chart: Revenue over time
     revenue_grouped = filtered_df.groupby(filtered_df['InvoiceDate'].dt.date)['TotalPrice'].sum().reset_index()
@@ -120,7 +160,7 @@ def update_graph(n_clicks, selected_country, start_date, end_date):
         opacity=0.6
     )
 
-    return revenue_fig, product_fig, scatter_fig
+    return revenue_fig, product_fig, scatter_fig, total_revenue, total_quantity, unique_products, num_invoices
 
 if __name__ == '__main__':
     app.run(debug=True)
