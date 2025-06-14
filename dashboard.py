@@ -25,7 +25,13 @@ controls = dbc.Col(
                         options=[{'label': c, 'value': c} for c in sorted(df['Country'].unique())],
                         value='United Kingdom',
                         clearable=False,
-                        style={'width': '100%'}
+                        style={
+                            'width': '100%',
+                            'fontSize': '16px',
+                            'height': '48px',
+                            'lineHeight': '48px',
+                            'alignItems': 'center'
+                        }
                     ),
                     width=12,
                     className="mb-3"
@@ -91,7 +97,7 @@ controls = dbc.Col(
 # App layout
 app.layout = dbc.Container(
     [
-        dbc.Row(dbc.Col(html.H2("Online Retail Dashboard"), className="mb-4")),
+        dbc.Row(dbc.Col(html.H2("Online Retail Dashboard"), className="mb-4 text-center")),
 
         dbc.Row(
             [
@@ -148,14 +154,35 @@ def update_graph(n_clicks, selected_country, start_date, end_date):
     # Line chart: Revenue over time
     revenue_grouped = filtered_df.groupby(filtered_df['InvoiceDate'].dt.date)['TotalPrice'].sum().reset_index()
     revenue_fig = px.line(revenue_grouped, x='InvoiceDate', y='TotalPrice',
-                          title=f"Total Revenue Over Time - {selected_country}")
+                          title=f"Total Revenue Over Time - {selected_country}", height=550)
+    
+    revenue_fig.update_layout(
+        title={'x': 0.5, 
+               'xanchor': 'center',
+                'font': {
+                    'size': 24
+                }
+        }
+    )
 
     # Bar chart: Top 10 products
     product_grouped = filtered_df.groupby('Description')['TotalPrice'].sum().reset_index()
     top_products = product_grouped.sort_values('TotalPrice', ascending=False).head(10)
-    product_fig = px.bar(top_products, x='TotalPrice', y='Description', orientation='h',
+    product_fig = px.bar(top_products, x='TotalPrice', y='Description', orientation='h', color='Description',
                          title="Top 10 Products by Revenue")
-    product_fig.update_layout(yaxis={'categoryorder': 'total ascending'})
+    product_fig.update_layout(
+        yaxis={
+            'categoryorder': 'total ascending'
+        },
+        showlegend=False,
+        title={
+            'x': 0.5,
+            'xanchor': 'center',
+            'font': {
+                'size': 24
+            }
+        }
+    )
 
     # Scatter plot: Quantity vs Price
     scatter_data = filtered_df[(filtered_df['Quantity'] > 0) & (filtered_df['Price'] > 0)]
@@ -167,6 +194,16 @@ def update_graph(n_clicks, selected_country, start_date, end_date):
         hover_data=['Description'],
         title="Quantity vs. Price Scatter Plot",
         opacity=0.6
+    )
+
+    scatter_fig.update_layout(
+        title={
+            'x': 0.5,
+            'xanchor': 'center',
+            'font': {
+                'size': 24
+            }
+        }
     )
 
     return revenue_fig, product_fig, scatter_fig, total_revenue, total_quantity, unique_products, num_invoices

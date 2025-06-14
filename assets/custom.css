@@ -17,6 +17,26 @@
 /* Dropdown container full width */
 #country-dropdown {
     width: 90%;
+    font-size: 18px
+}
+
+.Select-control {
+    height: 45px !important;
+    /* line-height: 45px !important; */
+    display: flex;
+    align-items: center;
+    font-size: 16px !important;
+    padding: 0 10px !important;
+}
+
+/* Align the selected value text vertically */
+.Select--single > .Select-control .Select-value {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.VirtualizedSelectOption {
+    font-size: 16px !important;
 }
 
 /* Date picker full width */
