@@ -136,12 +136,11 @@ app.layout = dbc.Container(
      Output('metric-quantity', 'children'),
      Output('metric-products', 'children'),
      Output('metric-invoices', 'children')],
-    Input('update-button', 'n_clicks'),
-    State('country-dropdown', 'value'),
-    State('date-picker', 'start_date'),
-    State('date-picker', 'end_date')
+    Input('country-dropdown', 'value'),
+    Input('date-picker', 'start_date'),
+    Input('date-picker', 'end_date')
 )
-def update_graph(n_clicks, selected_country, start_date, end_date):
+def update_graph(selected_country, start_date, end_date):
     filtered_df = df[
         (df['Country'] == selected_country) &
         (df['InvoiceDate'] >= pd.to_datetime(start_date)) &
