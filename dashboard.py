@@ -16,79 +16,82 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 # Controls
 controls = dbc.Col(
     dbc.Card([
-        dbc.CardHeader(html.H5("Filters")),
-        dbc.CardBody([
-            dbc.Row(
-                dbc.Col(
-                    dcc.Dropdown(
-                        id='country-dropdown',
-                        options=[{'label': c, 'value': c} for c in sorted(df['Country'].unique())],
-                        value='United Kingdom',
-                        clearable=False,
-                        style={
-                            'width': '100%',
-                            'fontSize': '16px',
-                            'height': '48px',
-                            'lineHeight': '48px',
-                            'alignItems': 'center'
-                        }
-                    ),
-                    width=12,
-                    className="mb-3"
-                )
-            ),
-            dbc.Row(
-                dbc.Col(
-                    dcc.DatePickerRange(
-                        id='date-picker',
-                        min_date_allowed=df['InvoiceDate'].min().date(),
-                        max_date_allowed=df['InvoiceDate'].max().date(),
-                        start_date=df['InvoiceDate'].min().date(),
-                        end_date=df['InvoiceDate'].max().date(),
-                        style={'width': '100%'}
-                    ),
-                    width=12,
-                    className="mb-3"
-                )
-            ),
-            dbc.Row(
-                dbc.Col(
-                    html.Button("Update", id='update-button', n_clicks=0, className="btn btn-primary w-100"),
-                    width=12,
-                    className="mb-3"
-                )
-            ),
-            dbc.Row([
-                dbc.Col(dbc.Card([
-                    dbc.CardBody([
-                        html.Small("Total Revenue", className="text-muted"),
-                        html.H5(id="metric-revenue", className="card-text")
-                    ])
-                ], className="mb-2"), width=6),
+        dbc.CardHeader(html.H5("Filters"), className="bg-primary text-white text-center"),
+        dbc.CardBody(
+            [
+                dbc.Row(
+                    dbc.Col(
+                        dcc.Dropdown(
+                            id='country-dropdown',
+                            options=[{'label': c, 'value': c} for c in sorted(df['Country'].unique())],
+                            value='United Kingdom',
+                            clearable=False,
+                            style={
+                                'width': '100%',
+                                'fontSize': '16px',
+                                'height': '48px',
+                                'lineHeight': '48px',
+                                'alignItems': 'center'
+                            }
+                        ),
+                        width=12,
+                        className="mb-3"
+                    )
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        dcc.DatePickerRange(
+                            id='date-picker',
+                            min_date_allowed=df['InvoiceDate'].min().date(),
+                            max_date_allowed=df['InvoiceDate'].max().date(),
+                            start_date=df['InvoiceDate'].min().date(),
+                            end_date=df['InvoiceDate'].max().date(),
+                            style={'width': '100%'}
+                        ),
+                        width=12,
+                        className="mb-3"
+                    )
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        html.Button("Update", id='update-button', n_clicks=0, className="btn btn-primary w-100"),
+                        width=12,
+                        className="mb-3"
+                    )
+                ),
+                dbc.Row([
+                    dbc.Col(dbc.Card([
+                        dbc.CardBody([
+                            html.Small("Total Revenue", className="text-muted"),
+                            html.H5(id="metric-revenue", className="metric-value")
+                        ])
+                    ], className="mb-2"), width=6),
 
-                dbc.Col(dbc.Card([
-                    dbc.CardBody([
-                        html.Small("Total Quantity", className="text-muted"),
-                        html.H5(id="metric-quantity", className="card-text")
-                    ])
-                ], className="mb-2"), width=6),
-            ]),
-            dbc.Row([
-                dbc.Col(dbc.Card([
-                    dbc.CardBody([
-                        html.Small("Unique Products", className="text-muted"),
-                        html.H5(id="metric-products", className="card-text")
-                    ])
-                ], className="mb-2"), width=6),
+                    dbc.Col(dbc.Card([
+                        dbc.CardBody([
+                            html.Small("Total Quantity", className="text-muted"),
+                            html.H5(id="metric-quantity", className="metric-value")
+                        ])
+                    ], className="mb-2"), width=6),
+                ]),
+                dbc.Row([
+                    dbc.Col(dbc.Card([
+                        dbc.CardBody([
+                            html.Small("Unique Products", className="text-muted"),
+                            html.H5(id="metric-products", className="metric-value")
+                        ])
+                    ], className="mb-2"), width=6),
 
-                dbc.Col(dbc.Card([
-                    dbc.CardBody([
-                        html.Small("Transactions", className="text-muted"),
-                        html.H5(id="metric-invoices", className="card-text")
-                    ])
-                ], className="mb-2"), width=6),
-            ]),
-        ])
+                    dbc.Col(dbc.Card([
+                        dbc.CardBody([
+                            html.Small("Transactions", className="text-muted"),
+                            html.H5(id="metric-invoices", className="metric-value")
+                        ])
+                    ], className="mb-2"), width=6),
+                ]),
+            ],
+            className="mb-4 shadow rounded"
+        )
     ]),
     md=3, sm=12
 )
