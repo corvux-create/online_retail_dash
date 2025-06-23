@@ -13,6 +13,8 @@ df['TotalPrice'] = df['Quantity'] * df['Price']
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
+server = app.server
+
 # Controls
 controls = dbc.Col(
     dbc.Card([
@@ -211,4 +213,4 @@ def update_graph(selected_country, start_date, end_date):
     return revenue_fig, product_fig, scatter_fig, total_revenue, total_quantity, unique_products, num_invoices
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run_server(debug=False)
