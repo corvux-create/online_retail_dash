@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: my-dash-app
+    name: Andrey_online_retail_dash
     env: python
     buildCommand: |
       pip install --upgrade pip setuptools wheel
